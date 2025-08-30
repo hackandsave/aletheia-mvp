@@ -1,0 +1,43 @@
+# --- Stage 1: Build the Frontend ---
+# Start with a "starter kit" that has Node.js for building our frontend
+FROM node:18 AS build
+
+# Set the working directory inside the container
+WORKDIR /app/frontend
+
+# Copy the frontend's "package list" files
+COPY frontend/package.json ./
+COPY frontend/package-lock.json ./
+
+# Install all the frontend's "furniture"
+RUN npm install
+
+# Copy the rest of our frontend code
+COPY frontend/ ./
+
+# Run the build command to create the optimized "flat-pack" version
+RUN npm run build
+
+
+# --- Stage 2: Build the Final Application ---
+# Start with a new, clean "starter kit" that has Python
+FROM python:3.9-slim
+
+# Set the working directory for the final application
+WORKDIR /app
+
+# Copy the backend's "shopping list"
+COPY backend/requirements.txt ./
+
+# Install all the backend's "ingredients"
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the "flat-packed" frontend from the first stage
+COPY --from=build /app/frontend/dist ./frontend/dist
+
+# Copy all of our backend code
+COPY backend/ ./backend/
+
+# Tell the container which command to run when it starts
+# This starts our "General Manager" server
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8080"]
