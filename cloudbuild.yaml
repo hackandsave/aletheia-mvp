@@ -1,0 +1,12 @@
+steps:
+# Step 1: Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/crack-glider-470520-r7/aletheia-repo/aletheia-mvp:latest', '.']
+
+# Step 2: Push the container image to Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'us-central1-docker.pkg.dev/crack-glider-470520-r7/aletheia-repo/aletheia-mvp:latest']
+
+# Tell Cloud Build which image was just built
+images:
+- 'us-central1-docker.pkg.dev/crack-glider-470520-r7/aletheia-repo/aletheia-mvp:latest'
