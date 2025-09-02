@@ -1,0 +1,14 @@
+tasks:
+  - name: Install Google Cloud SDK & Dependencies
+    init: |
+      if ! command -v gcloud &> /dev/null
+      then
+        curl https://sdk.cloud.google.com | bash -s -- --disable-prompts
+        echo "source /home/gitpod/.bashrc" >> /home/gitpod/.bashrc
+      fi
+      cd backend
+      python3 -m venv venv
+      source venv/bin/activate
+      pip install -r requirements.txt
+      cd ../frontend
+      npm install
